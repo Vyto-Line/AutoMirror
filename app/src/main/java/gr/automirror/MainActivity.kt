@@ -113,12 +113,25 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    /** Android Auto shows the app only if Play is the installer and the shell didn't start it. */
+    private fun hasPlayMark(): Boolean {
+        if (Build.VERSION.SDK_INT < 30) return true
+        return try {
+            val info = packageManager.getInstallSourceInfo(packageName)
+            info.installingPackageName == "com.android.vending" &&
+                info.initiatingPackageName != "com.android.shell"
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun refresh() {
         fun mark(ok: Boolean) = if (ok) "✅" else "❌"
         status.text = """
             ${mark(TouchInjectService.instance != null)} Αφή από το αυτοκίνητο
             ${mark(MirrorController.isCarConnected)} Android Auto συνδεδεμένο (εφαρμογή ανοιχτή)
             ${mark(MirrorController.isProjecting)} Καταγραφή οθόνης ενεργή
+            ${mark(hasPlayMark())} Εγκατάσταση αποδεκτή από Android Auto
         """.trimIndent()
     }
 }

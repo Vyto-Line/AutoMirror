@@ -40,6 +40,11 @@
             </intent-filter>
         </service>
 
+        <provider
+            android:name=".ApkProvider"
+            android:authorities="gr.automirror.apk"
+            android:exported="true" />
+
         <service
             android:name=".ProjectionService"
             android:exported="false"
