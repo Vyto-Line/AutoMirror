@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AutoMirror</string>
-    <string name="a11y_label">AutoMirror – αφή από την οθόνη του αυτοκινήτου</string>
-    <string name="a11y_desc">Επιτρέπει στα αγγίγματα στην οθόνη του Android Auto να περνούν στο κινητό όσο γίνεται mirroring.</string>
+    <string name="a11y_label">AutoMirror – touch from the car screen</string>
+    <string name="a11y_desc">Lets touches on the Android Auto screen reach the phone while mirroring.</string>
 </resources>

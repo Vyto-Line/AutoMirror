@@ -23,7 +23,7 @@ import gr.automirror.TouchInjectService
 import kotlin.math.abs
 
 class MirrorCarAppService : CarAppService() {
-    // Η εφαρμογή εγκαθίσταται εκτός Play Store, οπότε δεχόμαστε κάθε host.
+    // The app is installed outside the Play Store, so accept any host.
     override fun createHostValidator(): HostValidator = HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
     override fun onCreateSession(): Session = MirrorSession()
 }
@@ -33,15 +33,15 @@ class MirrorSession : Session() {
 }
 
 /**
- * Οθόνη τύπου "πλοήγησης": το Android Auto μας δίνει ένα Surface ολόκληρης της οθόνης,
- * στο οποίο προβάλλουμε το κινητό. Τα αγγίγματα επιστρέφουν μέσω του SurfaceCallback.
+ * A "navigation" screen: Android Auto gives us a Surface covering the whole screen,
+ * onto which we project the phone. Touches come back through the SurfaceCallback.
  */
 class MirrorScreen(carContext: CarContext) : Screen(carContext), SurfaceCallback {
 
     private val main = Handler(Looper.getMainLooper())
     private val stateListener: () -> Unit = { invalidate() }
 
-    // Συσσώρευση κύλισης ώστε να στέλνουμε λίγα, ομαλά swipes
+    // Accumulate scrolling so we send a few smooth swipes
     private var pendingDx = 0f
     private var pendingDy = 0f
     private val flushScroll = Runnable { sendPendingScroll() }
@@ -57,9 +57,9 @@ class MirrorScreen(carContext: CarContext) : Screen(carContext), SurfaceCallback
 
     override fun onGetTemplate(): Template {
         val label = when {
-            !MirrorController.isProjecting -> "Πάτα «Έναρξη» στο κινητό"
-            TouchInjectService.instance == null -> "Mirroring (χωρίς αφή)"
-            else -> "Mirroring ενεργό"
+            !MirrorController.isProjecting -> "Tap “Start” on the phone"
+            TouchInjectService.instance == null -> "Mirroring (no touch)"
+            else -> "Mirroring on"
         }
         val strip = ActionStrip.Builder()
             .addAction(Action.Builder().setTitle(label).setOnClickListener { invalidate() }.build())
@@ -67,7 +67,7 @@ class MirrorScreen(carContext: CarContext) : Screen(carContext), SurfaceCallback
 
         val builder = NavigationTemplate.Builder().setActionStrip(strip)
         if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_2) {
-            // Το κουμπί PAN ενεργοποιεί τη λειτουργία μετακίνησης => παίρνουμε onScroll/onFling
+            // The PAN button turns on pan mode => we get onScroll/onFling
             builder.setMapActionStrip(ActionStrip.Builder().addAction(Action.PAN).build())
         }
         return builder.build()
@@ -86,7 +86,7 @@ class MirrorScreen(carContext: CarContext) : Screen(carContext), SurfaceCallback
         MirrorController.onCarSurfaceDestroyed()
     }
 
-    // ---------- Αφή ----------
+    // ---------- Touch ----------
 
     override fun onClick(x: Float, y: Float) {
         val svc = TouchInjectService.instance ?: return
@@ -95,7 +95,7 @@ class MirrorScreen(carContext: CarContext) : Screen(carContext), SurfaceCallback
     }
 
     override fun onScroll(distanceX: Float, distanceY: Float) {
-        // distance = προηγούμενη θέση − τρέχουσα (όπως στο GestureDetector)
+        // distance = previous position − current (as in GestureDetector)
         pendingDx -= distanceX
         pendingDy -= distanceY
         main.removeCallbacks(flushScroll)

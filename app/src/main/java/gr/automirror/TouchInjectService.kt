@@ -7,8 +7,8 @@ import android.graphics.Path
 import android.view.accessibility.AccessibilityEvent
 
 /**
- * Υπηρεσία προσβασιμότητας: "πατάει" και "σύρει" στο κινητό
- * όταν ο χρήστης αγγίζει την οθόνη του Android Auto.
+ * Accessibility service: taps and swipes on the phone
+ * when the user touches the Android Auto screen.
  */
 class TouchInjectService : AccessibilityService() {
 

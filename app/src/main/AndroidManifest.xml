@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!-- Android Auto: εφαρμογή "πλοήγησης" που ζωγραφίζει απευθείας στην οθόνη του αυτοκινήτου -->
+    <!-- Android Auto: a "navigation" app that draws straight onto the car screen -->
     <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES" />
     <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
 

@@ -61,11 +61,11 @@ class MainActivity : ComponentActivity() {
         }
         root.addView(status)
 
-        root.addView(button("1. Ενεργοποίηση αφής (Προσβασιμότητα)") {
+        root.addView(button("1. Turn on touch (Accessibility)") {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         })
-        root.addView(button("2. Έναρξη mirroring") { startMirroring() })
-        root.addView(button("Διακοπή") {
+        root.addView(button("2. Start mirroring") { startMirroring() })
+        root.addView(button("Stop") {
             startService(Intent(this, ProjectionService::class.java)
                 .setAction(ProjectionService.ACTION_STOP))
         })
@@ -73,12 +73,12 @@ class MainActivity : ComponentActivity() {
         root.addView(TextView(this).apply {
             setPadding(0, pad, 0, 0)
             text = """
-                Οδηγίες:
-                • Συνδέσου στο Android Auto και άνοιξε την εφαρμογή «AutoMirror» από το μενού εφαρμογών του αυτοκινήτου.
-                • Πάτα «Έναρξη mirroring» και διάλεξε «Ολόκληρη οθόνη».
-                • Άγγιγμα στην οθόνη του αυτοκινήτου = πάτημα στο κινητό.
-                • Για κύλιση: πάτα το κουμπί μετακίνησης (σταυρός) στο Android Auto και σύρε.
-                • Χρησιμοποίησέ το μόνο όταν το αυτοκίνητο είναι σταματημένο.
+                How to use:
+                • Connect to Android Auto and open “AutoMirror” from the car's app menu.
+                • Tap “Start mirroring” and choose “Entire screen”.
+                • A touch on the car screen = a tap on the phone.
+                • To scroll: tap the pan button (cross arrows) on Android Auto and drag.
+                • Only use it while the car is parked.
             """.trimIndent()
         })
 
@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
     private fun startMirroring() {
         val mpm = getSystemService(MediaProjectionManager::class.java)
         val intent = if (Build.VERSION.SDK_INT >= 34) {
-            // Επιβάλλει καταγραφή ολόκληρης οθόνης (όχι μίας εφαρμογής)
+            // Forces capture of the entire screen (not a single app)
             mpm.createScreenCaptureIntent(MediaProjectionConfig.createConfigForDefaultDisplay())
         } else {
             mpm.createScreenCaptureIntent()
@@ -128,10 +128,10 @@ class MainActivity : ComponentActivity() {
     private fun refresh() {
         fun mark(ok: Boolean) = if (ok) "✅" else "❌"
         status.text = """
-            ${mark(TouchInjectService.instance != null)} Αφή από το αυτοκίνητο
-            ${mark(MirrorController.isCarConnected)} Android Auto συνδεδεμένο (εφαρμογή ανοιχτή)
-            ${mark(MirrorController.isProjecting)} Καταγραφή οθόνης ενεργή
-            ${mark(hasPlayMark())} Εγκατάσταση αποδεκτή από Android Auto
+            ${mark(TouchInjectService.instance != null)} Touch from the car
+            ${mark(MirrorController.isCarConnected)} Android Auto connected (app open)
+            ${mark(MirrorController.isProjecting)} Screen capture running
+            ${mark(hasPlayMark())} Install accepted by Android Auto
         """.trimIndent()
     }
 }

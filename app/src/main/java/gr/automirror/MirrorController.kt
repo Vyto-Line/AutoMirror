@@ -11,10 +11,10 @@ import android.view.Display
 import android.view.Surface
 
 /**
- * Ενώνει τα δύο κομμάτια:
- *  - το MediaProjection (καταγραφή οθόνης κινητού)
- *  - το Surface που δίνει το Android Auto (οθόνη αυτοκινήτου)
- * Όταν υπάρχουν και τα δύο, η οθόνη του κινητού "καθρεφτίζεται" στο Surface του αυτοκινήτου.
+ * Connects the two pieces:
+ *  - the MediaProjection (phone screen capture)
+ *  - the Surface Android Auto provides (the car screen)
+ * When both exist, the phone screen is mirrored onto the car's Surface.
  */
 object MirrorController {
 
@@ -42,7 +42,7 @@ object MirrorController {
     fun removeListener(l: () -> Unit) { listeners -= l }
     private fun notifyChanged() = main.post { listeners.toList().forEach { it() } }
 
-    // ---------- Πλευρά κινητού ----------
+    // ---------- Phone side ----------
 
     @Synchronized
     fun setProjection(p: MediaProjection?) {
@@ -55,7 +55,7 @@ object MirrorController {
         notifyChanged()
     }
 
-    // ---------- Πλευρά αυτοκινήτου ----------
+    // ---------- Car side ----------
 
     @Synchronized
     fun onCarSurfaceAvailable(surface: Surface, width: Int, height: Int, dpi: Int) {
@@ -70,8 +70,8 @@ object MirrorController {
     @Synchronized
     fun onCarSurfaceDestroyed() {
         carSurface = null
-        // Σε Android 14+ κάθε MediaProjection επιτρέπει ΜΟΝΟ ένα VirtualDisplay,
-        // οπότε δεν το καταστρέφουμε — απλώς το αποσυνδέουμε από το Surface.
+        // On Android 14+ each MediaProjection allows only ONE VirtualDisplay,
+        // so we don't destroy it: we just detach it from the Surface.
         virtualDisplay?.surface = null
         notifyChanged()
     }
@@ -103,9 +103,9 @@ object MirrorController {
         notifyChanged()
     }
 
-    // ---------- Μετατροπή συντεταγμένων αυτοκινήτου -> κινητού ----------
+    // ---------- Car -> phone coordinate mapping ----------
 
-    /** Μέγεθος οθόνης κινητού (λαμβάνει υπόψη την τρέχουσα περιστροφή). */
+    /** Phone screen size (takes the current rotation into account). */
     @Suppress("DEPRECATION")
     private fun phoneSize(): Point {
         val dm = appContext.getSystemService(DisplayManager::class.java)
@@ -115,8 +115,8 @@ object MirrorController {
     }
 
     /**
-     * Το mirroring κάνει "fit" την εικόνα του κινητού μέσα στην οθόνη του αυτοκινήτου
-     * με μαύρες μπάρες. Υπολογίζουμε την ίδια κλίμακα για να αντιστοιχίσουμε την αφή.
+     * Mirroring fits the phone picture inside the car screen
+     * with black bars. We use the same scale to map touches.
      */
     data class Mapping(val scale: Float, val offX: Float, val offY: Float, val phoneW: Int, val phoneH: Int)
 
@@ -129,7 +129,7 @@ object MirrorController {
         return Mapping(scale, offX, offY, ph.x, ph.y)
     }
 
-    /** Επιστρέφει το σημείο στο κινητό ή null αν το άγγιγμα ήταν πάνω στις μαύρες μπάρες. */
+    /** The point on the phone, or null if the touch landed on the black bars. */
     fun carToPhone(x: Float, y: Float): Pair<Float, Float>? {
         val m = mapping() ?: return null
         val px = (x - m.offX) / m.scale

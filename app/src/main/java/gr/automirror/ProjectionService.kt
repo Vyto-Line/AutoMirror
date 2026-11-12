@@ -20,7 +20,7 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.IntentCompat
 
 /**
- * Foreground service που κρατά ζωντανή την καταγραφή οθόνης (απαιτείται από Android 10+).
+ * Foreground service that keeps screen capture alive (required on Android 10+).
  */
 class ProjectionService : Service() {
 
@@ -43,7 +43,7 @@ class ProjectionService : Service() {
             return START_NOT_STICKY
         }
 
-        // Πρέπει να γίνει startForeground ΠΡΙΝ το getMediaProjection (Android 14+).
+        // startForeground must be called BEFORE getMediaProjection (Android 14+).
         ServiceCompat.startForeground(
             this, NOTIF_ID, buildNotification(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
@@ -69,7 +69,7 @@ class ProjectionService : Service() {
         return START_NOT_STICKY
     }
 
-    /** Κρατά την οθόνη του κινητού αναμμένη — με σβηστή οθόνη η εικόνα γίνεται μαύρη. */
+    /** Keeps the phone screen on: with the screen off the picture goes black. */
     @Suppress("DEPRECATION")
     private fun acquireWakeLock() {
         if (wakeLock?.isHeld == true) return
@@ -77,7 +77,7 @@ class ProjectionService : Service() {
         wakeLock = pm.newWakeLock(
             PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
             "AutoMirror:screen"
-        ).apply { acquire(4 * 60 * 60 * 1000L) } // έως 4 ώρες
+        ).apply { acquire(4 * 60 * 60 * 1000L) } // up to 4 hours
     }
 
     private fun releaseWakeLock() {
@@ -115,10 +115,10 @@ class ProjectionService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_view)
-            .setContentTitle("AutoMirror ενεργό")
-            .setContentText("Η οθόνη του κινητού προβάλλεται στο Android Auto")
+            .setContentTitle("AutoMirror is running")
+            .setContentText("Your phone screen is showing on Android Auto")
             .setContentIntent(openIntent)
-            .addAction(0, "Διακοπή", stopIntent)
+            .addAction(0, "Stop", stopIntent)
             .setOngoing(true)
             .build()
     }

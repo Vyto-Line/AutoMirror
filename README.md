@@ -1,43 +1,46 @@
-# AutoMirror – Screen mirroring κινητού στο Android Auto
+# AutoMirror: phone screen mirroring on Android Auto
 
-## Πώς δουλεύει
-- Η εφαρμογή δηλώνεται στο Android Auto ως εφαρμογή **πλοήγησης**, οπότε το Android Auto της δίνει ολόκληρη την οθόνη του αυτοκινήτου για να σχεδιάσει (Car App Library, `NavigationTemplate` + `SurfaceCallback`).
-- Στο κινητό, το **MediaProjection** καταγράφει την οθόνη και την προβάλλει σε εκείνη την επιφάνεια.
-- Τα αγγίγματα στην οθόνη του αυτοκινήτου περνούν στο κινητό μέσω μιας **υπηρεσίας προσβασιμότητας**.
+Shows your phone's screen on your car's Android Auto display, and lets you tap and scroll it from the car screen.
 
-## Build
-1. Άνοιξε τον φάκελο `AutoMirror` στο **Android Studio** (Ladybug ή νεότερο).
-2. Αν σου ζητηθεί, άφησέ το να φτιάξει/συγχρονίσει το Gradle wrapper.
-3. Build ▸ Build APK(s) ή απευθείας Run στο κινητό.
+> ⚠️ Use it only while the car is parked.
 
-## Εγκατάσταση ώστε να φαίνεται στο Android Auto
-Το Android Auto κρύβει εφαρμογές Car App Library που δεν εγκαταστάθηκαν «από το Google Play».
-Ούτε το `adb install` ούτε ο διαχειριστής αρχείων αρκούν. Λειτουργεί με το **UnknownAuto**:
+## How it works
+- The app registers with Android Auto as a **navigation** app, so Android Auto gives it the whole car screen to draw on (Car App Library, `NavigationTemplate` + `SurfaceCallback`).
+- On the phone, **MediaProjection** captures the screen and draws it onto that surface.
+- Touches on the car screen are passed to the phone through an **accessibility service**.
 
-1. Android Auto ▸ πάτα 10 φορές την «Έκδοση» ▸ ⋮ ▸ Ρυθμίσεις προγραμματιστή ▸ **Άγνωστες πηγές**: ON.
-2. Κινητό: Επιλογές προγραμματιστή ▸ **Εντοπισμός σφαλμάτων USB**: ON. Σύνδεση με USB σε υπολογιστή με adb.
-3. Εγκατάσταση **Shizuku** (Play Store) και **UnknownAuto** (github.com/GitMag/UnknownAuto).
-4. Shizuku ▸ «Έναρξη μέσω υπολογιστή» ▸ εκτέλεση της εντολής `adb shell .../libshizuku.so` που δείχνει.
-5. UnknownAuto ▸ Load APK ▸ `AutoMirror.apk` ▸ **Install** ▸ «Allow all the time» στο Shizuku ▸ Update. Πρέπει να δείξει ✔.
-6. Προσβασιμότητα ▸ AutoMirror: ON (σε Samsung ίσως χρειαστεί πρώτα: Εφαρμογές ▸ AutoMirror ▸ ⋮ ▸ «Να επιτρέπονται οι περιορισμένες ρυθμίσεις»).
-7. Επανεκκίνηση κινητού και σύνδεση στο αυτοκίνητο (λειτουργεί και ασύρματα).
+## Download
+Get `AutoMirror.apk` from the [latest release](../../releases/latest).
 
-Έλεγχος: `adb shell dumpsys package gr.automirror | findstr /i "initiating installerPackageName"`
-πρέπει να δείχνει `com.android.vending` και όχι `com.android.shell`. Η εφαρμογή δείχνει επίσης ✅ στη γραμμή «Εγκατάσταση αποδεκτή από Android Auto».
+## Install so it shows up in Android Auto
+Android Auto hides Car App Library apps that weren't installed "from Google Play".
+Neither `adb install` nor a file manager is enough. It works with **UnknownAuto**:
 
-## Νέα έκδοση (build)
-Actions ▸ Build APK ▸ **Run workflow**, ή push ενός tag `v*` (π.χ. `v1.2`). Κάθε build γίνεται ξεχωριστό release.
-Κάθε build υπογράφεται με νέο κλειδί, οπότε πριν την ενημέρωση: απεγκατάσταση της παλιάς και ξανά βήμα 5.
+1. Android Auto ▸ tap **Version** 10 times ▸ ⋮ ▸ Developer settings ▸ **Unknown sources**: ON.
+2. Phone: Developer options ▸ **USB debugging**: ON. Connect it by USB to a computer that has adb.
+3. Install **Shizuku** (Play Store) and **UnknownAuto** (github.com/GitMag/UnknownAuto).
+4. Shizuku ▸ "Start via computer" ▸ run the `adb shell .../libshizuku.so` command it shows.
+5. UnknownAuto ▸ Load APK ▸ `AutoMirror.apk` ▸ **Install** ▸ "Allow all the time" in Shizuku ▸ Update. It should show ✔.
+6. Accessibility ▸ AutoMirror: ON. On Samsung you may first need: Apps ▸ AutoMirror ▸ ⋮ ▸ "Allow restricted settings".
+7. Restart the phone and connect to the car (wireless Android Auto works too).
 
-## Χρήση
-1. Σύνδεσε το κινητό στο αυτοκίνητο και άνοιξε το **AutoMirror** από τις εφαρμογές του Android Auto.
-2. Στο κινητό άνοιξε το AutoMirror ▸ «Έναρξη mirroring» ▸ επίλεξε **ολόκληρη οθόνη**.
-3. Άγγιγμα = πάτημα. Για κύλιση πάτα το κουμπί μετακίνησης (σταυρός) στην οθόνη του αυτοκινήτου και σύρε.
-4. Το κινητό πρέπει να μένει **ξεκλείδωτο** — με κλειδωμένη/σβηστή οθόνη η εικόνα μαυρίζει.
+Check: `adb shell dumpsys package gr.automirror | findstr /i "initiating installerPackageName"`
+should show `com.android.vending`, not `com.android.shell`. The app also shows ✅ next to "Install accepted by Android Auto".
 
-## Περιορισμοί
-- Δεν μπορεί να ανέβει στο Play Store (η Google δεν επιτρέπει mirroring), μόνο sideload.
-- Οριζόντια οθόνη αυτοκινήτου + κάθετο κινητό = μαύρες μπάρες. Γύρνα το κινητό οριζόντια (π.χ. σε YouTube/χάρτες) για πλήρη οθόνη.
-- Ο ήχος δεν μεταφέρεται από την εφαρμογή· παίζει κανονικά μέσω της σύνδεσης Android Auto/Bluetooth όπως κάθε ήχος του κινητού.
-- Το Android Auto μπορεί σε κάποιες εκδόσεις να περιορίζει την αφή όσο το όχημα κινείται.
-- ⚠️ Χρησιμοποίησέ το μόνο με το αυτοκίνητο σταματημένο.
+## Use
+1. Connect the phone to the car and open **AutoMirror** from Android Auto's app list.
+2. On the phone, open AutoMirror ▸ **Start mirroring** ▸ choose **Entire screen**.
+3. Tap on the car screen = tap on the phone. To scroll, tap the pan button (cross arrows) on the car screen and drag.
+4. Keep the phone **unlocked**: with the screen locked or off, the picture goes black.
+
+## Limitations
+- It can't be published on the Play Store (Google doesn't allow mirroring), so it's sideload only.
+- A wide car screen with an upright phone means black bars. Turn the phone sideways (e.g. in YouTube or maps) to fill the screen.
+- The app doesn't carry sound; audio plays as usual through the Android Auto / Bluetooth connection.
+- Some Android Auto versions limit touch while the car is moving.
+
+## Building
+Actions ▸ Build APK ▸ **Run workflow**, or push a `v*` tag (e.g. `v1.2`). Each build becomes its own release.
+Each build is signed with a new key, so before updating: uninstall the old version and repeat step 5.
+
+To build locally: open the project in **Android Studio** (Ladybug or newer), let it sync Gradle, then Build ▸ Build APK(s).
