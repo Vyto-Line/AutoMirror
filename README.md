@@ -10,9 +10,24 @@
 2. Αν σου ζητηθεί, άφησέ το να φτιάξει/συγχρονίσει το Gradle wrapper.
 3. Build ▸ Build APK(s) ή απευθείας Run στο κινητό.
 
-## Ρυθμίσεις στο κινητό (μία φορά)
-1. **Ενεργοποίηση developer mode στο Android Auto:** Ρυθμίσεις ▸ Android Auto ▸ πάτα 10 φορές στο «Έκδοση» ▸ ⋮ ▸ Ρυθμίσεις προγραμματιστή ▸ ενεργοποίησε **«Άγνωστες πηγές» (Unknown sources)**. Χωρίς αυτό η εφαρμογή δεν εμφανίζεται στο αυτοκίνητο.
-2. **Αφή:** Android 13+: Ρυθμίσεις ▸ Εφαρμογές ▸ AutoMirror ▸ ⋮ ▸ «Να επιτρέπονται οι περιορισμένες ρυθμίσεις». Μετά: Προσβασιμότητα ▸ AutoMirror ▸ Ενεργό.
+## Εγκατάσταση ώστε να φαίνεται στο Android Auto
+Το Android Auto κρύβει εφαρμογές Car App Library που δεν εγκαταστάθηκαν «από το Google Play».
+Ούτε το `adb install` ούτε ο διαχειριστής αρχείων αρκούν. Λειτουργεί με το **UnknownAuto**:
+
+1. Android Auto ▸ πάτα 10 φορές την «Έκδοση» ▸ ⋮ ▸ Ρυθμίσεις προγραμματιστή ▸ **Άγνωστες πηγές**: ON.
+2. Κινητό: Επιλογές προγραμματιστή ▸ **Εντοπισμός σφαλμάτων USB**: ON. Σύνδεση με USB σε υπολογιστή με adb.
+3. Εγκατάσταση **Shizuku** (Play Store) και **UnknownAuto** (github.com/GitMag/UnknownAuto).
+4. Shizuku ▸ «Έναρξη μέσω υπολογιστή» ▸ εκτέλεση της εντολής `adb shell .../libshizuku.so` που δείχνει.
+5. UnknownAuto ▸ Load APK ▸ `AutoMirror.apk` ▸ **Install** ▸ «Allow all the time» στο Shizuku ▸ Update. Πρέπει να δείξει ✔.
+6. Προσβασιμότητα ▸ AutoMirror: ON (σε Samsung ίσως χρειαστεί πρώτα: Εφαρμογές ▸ AutoMirror ▸ ⋮ ▸ «Να επιτρέπονται οι περιορισμένες ρυθμίσεις»).
+7. Επανεκκίνηση κινητού και σύνδεση στο αυτοκίνητο (λειτουργεί και ασύρματα).
+
+Έλεγχος: `adb shell dumpsys package gr.automirror | findstr /i "initiating installerPackageName"`
+πρέπει να δείχνει `com.android.vending` και όχι `com.android.shell`. Η εφαρμογή δείχνει επίσης ✅ στη γραμμή «Εγκατάσταση αποδεκτή από Android Auto».
+
+## Νέα έκδοση (build)
+Actions ▸ Build APK ▸ **Run workflow**, ή push ενός tag `v*` (π.χ. `v1.2`). Κάθε build γίνεται ξεχωριστό release.
+Κάθε build υπογράφεται με νέο κλειδί, οπότε πριν την ενημέρωση: απεγκατάσταση της παλιάς και ξανά βήμα 5.
 
 ## Χρήση
 1. Σύνδεσε το κινητό στο αυτοκίνητο και άνοιξε το **AutoMirror** από τις εφαρμογές του Android Auto.
